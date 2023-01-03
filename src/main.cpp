@@ -9,6 +9,7 @@
 #include "include/dijkstra.h"
 #include "include/dfs.h"
 #include "include/TextCircle.h"
+#include "include/directedLine.h"
 
 
 /** display canvas being colored in by segments
@@ -166,7 +167,7 @@ int main()
     std::mt19937 rng(rd());
 
     std::uniform_real_distribution<float> xdist(5, 2250);
-    std::uniform_real_distribution<float> ydist(5, 1200);
+    std::uniform_real_distribution<float> ydist(5, 1050);
 
     sf::Time delta_time;
 
@@ -190,6 +191,9 @@ int main()
     }
     unsigned node_count = 0;
     std::unordered_map<std::string, Parsing::AdjacencyList*> &adj_map = wikigraph.get_adj_map();
+    
+    /**
+
     for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
         nodes.emplace_back(it->first, 5.0f, font);
         nodes[node_count].setPosition(xdist(rng), ydist(rng));
@@ -198,19 +202,35 @@ int main()
         //    break;
         //}
     }
-
-  std::cout << nodes[0].getText() << std::endl;
-  Parsing::Node* current = wikigraph.get_vertex(nodes[0].getText());
+    */
   
-  for (auto neighbor : wikigraph.get_adj_list(current)->get_edges()) {
-    std::cout << neighbor->get_destination()->get_name() << std::endl;
+  Parsing::Node* vertex = wikigraph.get_vertex("Zara_Yaqob");
+  //std::cout << vertex->get_name() << std::endl;
+
+  nodes.emplace_back(vertex->get_name(), 15.0f, font);
+
+
+  for (auto edge : wikigraph.get_adj_list(vertex)->get_edges()) {
+
+    nodes.emplace_back(edge->get_destination()->get_name(), 15.0f, font);
+  }
+
+  float randx, randy;
+  vector<DirectedLine> lines;
+
+  for (size_t i = 0; i < nodes.size(); i++) {
+    randx = xdist(rng);
+    randy = ydist(rng);
+    nodes[i].setPosition(randx, randy);
+    lines.emplace_back(nodes[0].getPosition(), sf::Vector2f(randx, randy));
+    
   }
 
 
 
 
     // Create the window
-    sf::RenderWindow window(sf::VideoMode(2300, 1250), "My Window");
+    sf::RenderWindow window(sf::VideoMode(2300, 1100), "My Window");
 
     sf::Clock clock;
 
@@ -240,6 +260,13 @@ int main()
         for (const auto& node : nodes)
         {
             window.draw(node);
+            for (auto& line: lines){
+          line.update();
+        }
+
+        for (const auto& line : lines) {
+          window.draw(line);
+        }
         }
 
         // Display the window

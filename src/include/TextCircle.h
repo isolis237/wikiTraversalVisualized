@@ -9,7 +9,7 @@ public:
     {
         // Set up the circle
         circle.setRadius(radius);
-        circle.setFillColor(sf::Color::Red);
+        circle.setFillColor(sf::Color::Cyan);
         circle.setOrigin(radius, radius);
 
         // Set up the text
