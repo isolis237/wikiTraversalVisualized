@@ -194,10 +194,17 @@ int main()
         nodes.emplace_back(it->first, 5.0f, font);
         nodes[node_count].setPosition(xdist(rng), ydist(rng));
         node_count++;
-        if (node_count > 1000) {
-            break;
-        }
+        //if (node_count > 1000) {
+        //    break;
+        //}
     }
+
+  std::cout << nodes[0].getText() << std::endl;
+  Parsing::Node* current = wikigraph.get_vertex(nodes[0].getText());
+  
+  for (auto neighbor : wikigraph.get_adj_list(current)->get_edges()) {
+    std::cout << neighbor->get_destination()->get_name() << std::endl;
+  }
 
 
 
@@ -233,7 +240,6 @@ int main()
         for (const auto& node : nodes)
         {
             window.draw(node);
-            node.drawEdges(window, sf::RenderStates::Default);
         }
 
         // Display the window

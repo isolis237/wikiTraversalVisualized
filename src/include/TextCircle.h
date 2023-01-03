@@ -59,22 +59,12 @@ public:
         // Return the position of the circle
         return circle.getPosition();
     }
-    void addChild(TextCircle* child)
-    {
-        children.push_back(child);
+
+    std::string getText() {
+        return text.getString();
     }
 
-    void drawEdges(sf::RenderTarget& target, sf::RenderStates states) const
-    {
-        sf::VertexArray lines(sf::Lines, children.size() * 2);
-        for (std::size_t i = 0; i < children.size(); ++i)
-        {
-            lines[i * 2].position = getPosition();
-            lines[i * 2 + 1].position = children[i]->getPosition();
-        }
-        states.transform *= getTransform();
-        target.draw(lines, states);
-    }
+
 
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -87,6 +77,5 @@ private:
     sf::CircleShape circle;
     sf::Text text;
     float original_radius;
-    std::vector<TextCircle*> children;
 };
 
