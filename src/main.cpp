@@ -182,49 +182,57 @@ int main()
     std::cout << "************************************************************************************" << std::endl << std::endl;
 
     std::vector<TextCircle> nodes;
+    
+
     // Set up the font
-    sf::Font font;
-    if (!font.loadFromFile("/Users/Ivan/Documents/GitHub/WikiTraversalVisualized/src/lato/Lato-Black.ttf"))
-    {
-        // Error loading font
-        return 1;
-    }
-    unsigned node_count = 0;
-    std::unordered_map<std::string, Parsing::AdjacencyList*> &adj_map = wikigraph.get_adj_map();
-    
-    /**
-
-    for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
-        nodes.emplace_back(it->first, 5.0f, font);
-        nodes[node_count].setPosition(xdist(rng), ydist(rng));
-        node_count++;
-        //if (node_count > 1000) {
-        //    break;
-        //}
-    }
-    */
-  
-  Parsing::Node* vertex = wikigraph.get_vertex("Zara_Yaqob");
-  //std::cout << vertex->get_name() << std::endl;
-
-  nodes.emplace_back(vertex->get_name(), 15.0f, font);
-
-
-  for (auto edge : wikigraph.get_adj_list(vertex)->get_edges()) {
-
-    nodes.emplace_back(edge->get_destination()->get_name(), 15.0f, font);
+  sf::Font font;
+  if (!font.loadFromFile("/Users/Ivan/Documents/GitHub/WikiTraversalVisualized/src/lato/Lato-Black.ttf"))
+  {
+      // Error loading font
+      return 1;
   }
 
-  float randx, randy;
-  vector<DirectedLine> lines;
+  // Create an unordered map to store the nodes
+  std::unordered_map<std::string, TextCircle> node_map;
 
-  for (size_t i = 0; i < nodes.size(); i++) {
-    randx = xdist(rng);
-    randy = ydist(rng);
-    nodes[i].setPosition(randx, randy);
-    lines.emplace_back(nodes[0].getPosition(), sf::Vector2f(randx, randy));
-    
+  // Get the map of nodes in the graph
+  std::unordered_map<std::string, Parsing::AdjacencyList*> &adj_map = wikigraph.get_adj_map();
+
+ // Create a vector of DirectedLine objects
+std::vector<DirectedLine> lines;
+TextCircle temp;
+
+unsigned node_count = 0;
+unsigned max_node = 20;
+for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
+  auto it_node = node_map.find(it->first);
+  if (it_node == node_map.end()) {
+    temp = TextCircle(it->first, 5.0f, font);
+    node_map[it->first] = temp;
+    float randx = xdist(rng);
+    float randy = ydist(rng);
+    node_map[it->first].setPosition(randx,randy);
   }
+
+  //iterate over child nodes of current node
+  for(auto edge: it->second->get_edges()) {
+    auto it_child = node_map.find(edge->get_destination()->get_name());
+    if (it_child == node_map.end()) {
+      node_map[edge->get_destination()->get_name()] = TextCircle(edge->get_destination()->get_name(), 5.0f, font);
+      // Set the position of the TextCircle object to a random position
+      float randx = xdist(rng);
+      float randy = ydist(rng);
+      node_map[edge->get_destination()->get_name()].setPosition(randx, randy);
+    }
+    // Create a DirectedLine object that connects the parent node to the child node
+    lines.emplace_back(node_map[it->first].getPosition(), node_map[edge->get_destination()->get_name()].getPosition());
+  }
+
+  node_count++;
+  if (node_count > max_node) {
+    break;
+  }
+}
 
 
 
@@ -249,24 +257,25 @@ int main()
 
         sf::Time delta_time = clock.restart();
 
-        for (auto& node: nodes) {
-            node.update(delta_time.asSeconds(), sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y));
+        for (auto& node: node_map) {
+            node.second.update(delta_time.asSeconds(), sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y));
         }
 
         // Clear the window
         window.clear(sf::Color::White);
 
         // Draw the shapes
-        for (const auto& node : nodes)
+        for (auto& node : node_map)
         {
-            window.draw(node);
-            for (auto& line: lines){
-          line.update();
-        }
+          window.draw(node.second);
 
-        for (const auto& line : lines) {
-          window.draw(line);
-        }
+          for (auto& line: lines){
+            line.update();
+          }
+
+          for (const auto& line : lines) {
+            window.draw(line);
+          }
         }
 
         // Display the window

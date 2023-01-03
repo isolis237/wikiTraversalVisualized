@@ -25,6 +25,7 @@ public:
             this->text.setScale(2.0f * radius / this->text.getLocalBounds().width, 1.0f);
         }
     }
+    TextCircle() : TextCircle("", 0.0f, sf::Font()){}
 
     void update(const float& delta_time, const sf::Vector2f mouse_pos)
     {
