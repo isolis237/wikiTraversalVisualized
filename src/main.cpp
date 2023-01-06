@@ -203,7 +203,7 @@ std::vector<DirectedLine> lines;
 TextCircle temp;
 
 unsigned node_count = 0;
-unsigned max_node = 20;
+unsigned max_node = 10;
 for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
   auto it_node = node_map.find(it->first);
   if (it_node == node_map.end()) {
