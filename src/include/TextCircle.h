@@ -18,6 +18,7 @@ public:
         this->text.setString(text);
         this->text.setFont(font);
         this->text.setCharacterSize(static_cast<unsigned int>(radius));
+        this->text.setOrigin(this->text.getLocalBounds().width / 2, this->text.getLocalBounds().height / 2);
         this->text.setFillColor(sf::Color::Black);
 
         // Scale down the text if it is too large to fit within the circle
@@ -33,24 +34,24 @@ public:
     // Check if the mouse is over the circle
     if (circle.getGlobalBounds().contains(mouse_pos))
     {
+
         // Increase the radius of the circle
         circle.setRadius(scaled_radius);
         circle.setFillColor(sf::Color::Blue);
 
         // Scale up the text
         this->text.setCharacterSize(scaled_radius);
+        //this->text.setOrigin(this->text.getLocalBounds().width / 2.0f, this->text.getLocalBounds().height / 2.0f);
         this->text.setScale(2.0f * (scaled_radius) / this->text.getLocalBounds().width, 1.0f);
     }
     else
     {
         // Reset the radius of the circle and set its position back to its original position
         circle.setRadius(original_radius);
-        circle.setPosition(getPosition());
 
         // Reset the text to its original size and position
         this->text.setCharacterSize(original_radius);
         this->text.setScale(1.0f, 1.0f);
-        text.setPosition(getPosition());
         circle.setFillColor(sf::Color::Red);
     }
 }

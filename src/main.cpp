@@ -163,11 +163,15 @@ int main() {
 
 int main()
 {
+
+  sf::RenderTexture render_texture;
+  render_texture.create(2300,1100);
+
     std::random_device rd;
-    std::mt19937 rng(rd());
+    std::minstd_rand rng(rd());
 
     std::uniform_real_distribution<float> xdist(5, 2250);
-    std::uniform_real_distribution<float> ydist(5, 1050);
+    std::uniform_real_distribution<float> ydist(5, 1100);
 
     sf::Time delta_time;
 
@@ -207,7 +211,7 @@ unsigned max_node = 10;
 for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
   auto it_node = node_map.find(it->first);
   if (it_node == node_map.end()) {
-    temp = TextCircle(it->first, 5.0f, font);
+    temp = TextCircle(it->first, 3.5f, font);
     node_map[it->first] = temp;
     float randx = xdist(rng);
     float randy = ydist(rng);
@@ -261,24 +265,27 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
             node.second.update(delta_time.asSeconds(), sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y));
         }
 
-        // Clear the window
-        window.clear(sf::Color::White);
+        render_texture.clear(sf::Color::White);
 
         // Draw the shapes
+        for (auto& line: lines){
+          line.update();
+        }
+
+        for (const auto& line : lines) {
+          render_texture.draw(line);
+        }
+
         for (auto& node : node_map)
         {
-          window.draw(node.second);
-
-          for (auto& line: lines){
-            line.update();
-          }
-
-          for (const auto& line : lines) {
-            window.draw(line);
-          }
+          render_texture.draw(node.second);
         }
 
         // Display the window
+        render_texture.display();
+
+        sf::Sprite sprite(render_texture.getTexture());
+        window.draw(sprite);
         window.display();
     }
 
