@@ -186,7 +186,16 @@ int main()
     std::cout << "************************************************************************************" << std::endl << std::endl;
 
     std::vector<TextCircle> nodes;
-    
+
+    //DFS dfs(&wikigraph);
+    //vector<string> dfs_path = dfs.get_path("Virus", "Dam");
+
+    //Dijkstra dijkstra(&wikigraph);
+    //vector<string> dijkstra_path = dijkstra.get_path("Virus", "Dam");    
+
+  //for (string node : dijkstra_path) {
+  //  std::cout << node << std::endl;
+  //}
 
     // Set up the font
   sf::Font font;
@@ -207,7 +216,7 @@ std::vector<DirectedLine> lines;
 TextCircle temp;
 
 unsigned node_count = 0;
-unsigned max_node = 10;
+unsigned max_node = 20;
 for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
   auto it_node = node_map.find(it->first);
   if (it_node == node_map.end()) {
@@ -242,52 +251,68 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
 
 
     // Create the window
-    sf::RenderWindow window(sf::VideoMode(2300, 1100), "My Window");
+sf::RenderWindow window(sf::VideoMode(2300, 1100), "My Window");
 
-    sf::Clock clock;
+sf::Clock clock;
 
-    // Run the main loop
-    while (window.isOpen())
+// Set the delay time in milliseconds
+const float delay_time = 500.0f;
+
+// Set the starting time to the current time
+sf::Time start_time = clock.getElapsedTime();
+
+// Run the main loop
+while (window.isOpen())
+{
+    // Handle events
+    sf::Event event;
+    while (window.pollEvent(event))
     {
-        // Handle events
-        sf::Event event;
-        while (window.pollEvent(event))
+        if (event.type == sf::Event::Closed)
         {
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
+            window.close();
         }
-
-        sf::Time delta_time = clock.restart();
-
-        for (auto& node: node_map) {
-            node.second.update(delta_time.asSeconds(), sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y));
-        }
-
-        render_texture.clear(sf::Color::White);
-
-        // Draw the shapes
-        for (auto& line: lines){
-          line.update();
-        }
-
-        for (const auto& line : lines) {
-          render_texture.draw(line);
-        }
-
-        for (auto& node : node_map)
-        {
-          render_texture.draw(node.second);
-        }
-
-        // Display the window
-        render_texture.display();
-
-        sf::Sprite sprite(render_texture.getTexture());
-        window.draw(sprite);
-        window.display();
     }
+
+    // Measure the elapsed time since the start of the animation
+    sf::Time elapsed_time = clock.getElapsedTime() - start_time;
+
+    render_texture.clear(sf::Color::White);
+
+    // Draw the shapes
+    for (auto& line: lines){
+      line.update();
+    }
+
+    for (const auto& line : lines) {
+      render_texture.draw(line);
+    }
+
+    for (auto& node : node_map)
+    {
+      render_texture.draw(node.second);
+    }
+
+    // Iterate over the nodes in the path
+    /**for (string node : dijkstra_path) {
+        // Calculate the delay time for the current node
+        float node_delay = delay_time * std::distance(dfs_path.begin(), std::find(dfs_path.begin(), dfs_path.end(), node));
+
+        // Check if the elapsed time is greater than or equal to the delay time for the current node
+        if (elapsed_time.asMilliseconds() >= node_delay) {
+            // Update and display the node
+            node_map[node].update();
+            render_texture.display();
+            sf::Sprite sprite(render_texture.getTexture());
+            window.draw(sprite);
+        }
+    }*/
+
+    // Display the window
+    window.display();
+}
+
+
 
     return 0;
 }

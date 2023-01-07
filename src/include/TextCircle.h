@@ -56,6 +56,13 @@ public:
     }
 }
 
+void update() {
+    circle.setRadius(scaled_radius);
+    circle.setFillColor(sf::Color::Green);
+    this->text.setCharacterSize(scaled_radius);
+    this->text.setScale(2.0f * (scaled_radius) / this->text.getLocalBounds().width, 1.0f);
+}
+
 
 
     void setPosition(float x, float y)
