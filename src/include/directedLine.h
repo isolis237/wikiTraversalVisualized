@@ -24,6 +24,26 @@ public:
         m_line[1].color = sf::Color::Red;
     }
 
+    void setParent(TextCircle* parent) {
+        parent_ = parent;
+    }
+
+    TextCircle* getParent() {
+        return parent_;
+    }
+
+    void setChild(TextCircle* child) {
+        child_ = child;
+    }
+
+    TextCircle* getChild() {
+        return child_;
+    }
+
+    
+
+    
+
 private:
     sf::VertexArray m_line;
 
@@ -33,4 +53,7 @@ private:
         // Draw the line
         target.draw(m_line, states);
     }
+
+    TextCircle* parent_;
+    TextCircle* child_;
 };

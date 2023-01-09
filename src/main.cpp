@@ -16,6 +16,9 @@
 const float screenW = 1450;
 const float screenH = 750;
 
+const string data_path = "/Users/Ivan/Documents/GitHub/wikiTraversalVisualized/src/links.tsv";
+const string font_path = "/Users/Ivan/Documents/GitHub/wikiTraversalVisualized/src/lato/Lato-Regular.ttf";
+
 
 
 int main()
@@ -37,7 +40,7 @@ int main()
     std::cout << std::endl << std::endl << std::endl; 
     std::cout << "************************************************************************************" << std::endl;
     std::cout << "Creating graph from wikilinks." << std::endl << std::endl;
-    Digraph wikigraph("/Users/isolis/Documents/Github/wikiTraversalVisualized/src/links.tsv");
+    Digraph wikigraph(data_path);
     std::cout << "Vertex Count: " << wikigraph.vertex_count_ << std::endl;
     std::cout << "Edge Count: " << wikigraph.edge_count_ << std::endl;
     std::cout << "************************************************************************************" << std::endl << std::endl;
@@ -47,7 +50,7 @@ int main()
 
     // Set up the font
   sf::Font font;
-  if (!font.loadFromFile("/Users/isolis/Documents/Github/wikiTraversalVisualized/src/lato/Lato-Regular.ttf"))
+  if (!font.loadFromFile(font_path))
   {
       // Error loading font
       return 1;
@@ -87,6 +90,8 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
     }
     // Create a DirectedLine object that connects the parent node to the child node
     lines.emplace_back(node_map[it->first].getPosition(), node_map[edge->get_destination()->get_name()].getPosition());
+    lines.back().setParent(&node_map[it->first]);
+    lines.back().setChild(&node_map[edge->get_destination()->get_name()]);
     node_map[it->first].addNeighbor(&node_map[edge->get_destination()->get_name()]);
   }
 
@@ -96,13 +101,19 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
   }
 }
 
+  for (auto line : lines) {
+    std::cout << line.getParent()->getText();
+    std::cout << ", ";
+    std::cout << line.getChild()->getText() << std::endl;
+  }
 
+/**
   TextCircle* testNode = &node_map["Zara_Yaqob"];
   vector<TextCircle*> neighbors = testNode->getNeighbors();
 
   for (auto neighbor : neighbors) {
     std::cout << neighbor->getText() << std::endl;
-  }
+  }*/
 
 
     // Create the window
@@ -141,11 +152,7 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
 
         render_texture.clear(sf::Color::White);
 
-        // Draw the shapes
-        for (auto& line: lines){
-          line.update();
-        }
-
+        //Draw each node and directed line
         for (const auto& line : lines) {
           render_texture.draw(line);
         }
@@ -155,11 +162,15 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
           render_texture.draw(node.second);
         }
 
-        for (auto &node : node_map) {
+        //find neighbors of node of interest
+        vector<TextCircle* > parentNodeNeighbors = node_map["Wikispecies"].getNeighbors();
+
+        //iterate through each neighbor and update it & draw updated node to canvas
+        for (auto &node : parentNodeNeighbors) {
           elapsed_time += delta_time;
           if (elapsed_time > draw_delay) {
-            node.second.algoUpdate();
-            render_texture.draw(node.second);
+            node->algoUpdate();
+            render_texture.draw(*node);
             render_texture.display();
             sf::Sprite sprite(render_texture.getTexture());
             window.draw(sprite);
@@ -168,12 +179,14 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
           }
         }
 
+      /**
         // Display the window
         render_texture.display();
 
         sf::Sprite sprite(render_texture.getTexture());
         window.draw(sprite);
         window.display();
+        */
     }
 
     return 0;
