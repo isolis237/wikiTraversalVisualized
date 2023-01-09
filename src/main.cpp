@@ -165,11 +165,18 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
         //find neighbors of node of interest
         vector<TextCircle* > parentNodeNeighbors = node_map["Wikispecies"].getNeighbors();
 
+        //create line that will be used to highlight path from parent to each child node
+        sf::VertexArray path = sf::VertexArray(sf::LineStrip, 2);
+        path[0].position = node_map["Wikispecies"].getPosition();
+        path[0].color = sf::Color::Magenta;
         //iterate through each neighbor and update it & draw updated node to canvas
         for (auto &node : parentNodeNeighbors) {
           elapsed_time += delta_time;
           if (elapsed_time > draw_delay) {
             node->algoUpdate();
+            path[1].position = node->getPosition();
+            path[1].color = sf::Color::Magenta;
+            render_texture.draw(path);
             render_texture.draw(*node);
             render_texture.display();
             sf::Sprite sprite(render_texture.getTexture());
