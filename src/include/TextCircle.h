@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
 
 class TextCircle : public sf::Drawable, public sf::Transformable
 {
@@ -29,6 +30,13 @@ public:
     }
     TextCircle() : TextCircle("", 0.0f, sf::Font()){}
 
+    void algoUpdate() {
+        circle.setRadius(scaled_radius);
+        circle.setFillColor(sf::Color::Blue);
+        this->text.setCharacterSize(scaled_radius);
+        this->text.setScale(2.0f * (scaled_radius) / this->text.getLocalBounds().width, 1.0f);
+    }
+
     void update(const float& delta_time, const sf::Vector2f mouse_pos)
 {
     // Check if the mouse is over the circle
@@ -57,6 +65,13 @@ public:
 }
 
 
+    void addNeighbor(TextCircle* neighbor) {
+        neighbors.push_back(neighbor);
+    }
+
+    vector<TextCircle*> getNeighbors() {
+        return neighbors;
+    }
 
     void setPosition(float x, float y)
     {
@@ -90,5 +105,6 @@ private:
     sf::Text text;
     float original_radius;
     float scaled_radius = original_radius * 12.0f;
+    vector<TextCircle*> neighbors;
 };
 
