@@ -12,11 +12,11 @@
 #include "include/directedLine.h"
 
 
-const string startNode = "Sugar";
-const string endNode = "Confucius";
+string startNode = "Banana";
+string endNode = "Wikipedia";
 
 
-const float screenW = 2050;
+const float screenW = 2150;
 const float screenH = 1100;
 
 const string data_path = "/Users/Ivan/Documents/GitHub/wikiTraversalVisualized/src/links.tsv";
@@ -70,11 +70,13 @@ std::vector<DirectedLine> lines;
 TextCircle temp;
 
 unsigned node_count = 0;
-unsigned max_node = 4600;
+unsigned max_node = 5000;
+
+float node_size = 15000.0f / max_node;
 for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
   auto it_node = node_map.find(it->first);
   if (it_node == node_map.end()) {
-    temp = TextCircle(it->first, 3.5f, font);
+    temp = TextCircle(it->first, node_size, font);
     node_map[it->first] = temp;
     float randx = xdist(rng);
     float randy = ydist(rng);
@@ -85,7 +87,7 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
   for(auto edge: it->second->get_edges()) {
     auto it_child = node_map.find(edge->get_destination()->get_name());
     if (it_child == node_map.end()) {
-      node_map[edge->get_destination()->get_name()] = TextCircle(edge->get_destination()->get_name(), 5.0f, font);
+      node_map[edge->get_destination()->get_name()] = TextCircle(edge->get_destination()->get_name(), node_size, font);
       // Set the position of the TextCircle object to a random position
       float randx = xdist(rng);
       float randy = ydist(rng);
@@ -103,6 +105,8 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
     break;
   }
 }
+
+
 
 //find dfs and dijkstra path between two nodes
 
@@ -147,7 +151,7 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
         sf::Time delta_time = clock.restart();
         elapsed_time += delta_time;
         timer += delta_time;
-
+        bool first = false;
         for (auto& node: node_map) {
             node.second.update(delta_time.asSeconds(), sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y));
         }
