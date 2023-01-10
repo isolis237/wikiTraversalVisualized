@@ -1,3 +1,51 @@
+# Project that allows you to visualize paths between wikipedia pages using hyperlinks
+- Compares DFS and dijkstra algorithm path sizes between any two nodes
+
+To run project:
+1) clone project into empty repo
+2) Run the following commands:
+    ```
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+    cmake --build build
+    ```
+3) cd into build folder
+4) run project with following command:
+    ```
+    ./CMakeSFMLProject
+    ```
+
+- Modify start and end nodes by modifying them in main.cpp
+- All possible start and end nodes listed in links.tsv
+- Modify max_nodes in main.cpp to see relationships better
+- Hover over nodes to scale them up and see their text better
+
+Example outputs:
+
+1) small graph to visualize relationships (start node has blue line and end node is a red line)
+<img width="2042" alt="Screen Shot 2023-01-09 at 8 41 45 PM" src="https://user-images.githubusercontent.com/67722662/211656082-7389cf4c-53d2-411f-a16d-46c6da88cbc5.png">
+
+
+
+2) Full data ~4600 unique nodes & path between two nodes shown using dijkstra's algorithm (green is start node red is end node)
+<img width="2046" alt="Screen Shot 2023-01-09 at 8 37 40 PM" src="https://user-images.githubusercontent.com/67722662/211656096-70f50069-6b68-43d3-aa7a-30034ed15fa6.png">
+
+
+
+
+
+# TODO
+- Add incremental step algorithms to visualize paths between nodes
+- Add more graph traversal algorithms
+- Find better way to display graph data to reduce node overlap
+
+
+
+
+
+Project was built using CMake SFML Project Template, more specifics below:
+
+
+
 # CMake SFML Project Template
 
 This repository template should allow for a fast and hassle-free kick start of your next SFML project using CMake.
