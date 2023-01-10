@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#include "../include/dfs.h"
-#include "../include/digraph.h"
+#include "./include/dfs.h"
+#include "./include/digraph.h"
 
 using namespace Parsing;
 

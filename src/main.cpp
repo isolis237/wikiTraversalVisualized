@@ -12,9 +12,12 @@
 #include "include/directedLine.h"
 
 
+const string startNode = "Sugar";
+const string endNode = "Confucius";
 
-const float screenW = 1450;
-const float screenH = 750;
+
+const float screenW = 2050;
+const float screenH = 1100;
 
 const string data_path = "/Users/Ivan/Documents/GitHub/wikiTraversalVisualized/src/links.tsv";
 const string font_path = "/Users/Ivan/Documents/GitHub/wikiTraversalVisualized/src/lato/Lato-Regular.ttf";
@@ -31,7 +34,7 @@ int main()
     std::minstd_rand rng(rd());
 
     std::uniform_real_distribution<float> xdist(5, screenW - 25);
-    std::uniform_real_distribution<float> ydist(5, screenH - 25);
+    std::uniform_real_distribution<float> ydist(5, screenH - 20);
 
     sf::Time delta_time;
 
@@ -67,7 +70,7 @@ std::vector<DirectedLine> lines;
 TextCircle temp;
 
 unsigned node_count = 0;
-unsigned max_node = 5;
+unsigned max_node = 4600;
 for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
   auto it_node = node_map.find(it->first);
   if (it_node == node_map.end()) {
@@ -101,19 +104,18 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
   }
 }
 
-  for (auto line : lines) {
-    std::cout << line.getParent()->getText();
-    std::cout << ", ";
-    std::cout << line.getChild()->getText() << std::endl;
-  }
+//find dfs and dijkstra path between two nodes
 
-/**
-  TextCircle* testNode = &node_map["Zara_Yaqob"];
-  vector<TextCircle*> neighbors = testNode->getNeighbors();
+  vector<string> dfs_path = DFS(&wikigraph).get_path(startNode, endNode);
 
-  for (auto neighbor : neighbors) {
-    std::cout << neighbor->getText() << std::endl;
-  }*/
+    vector<string> dijkstra_path = Dijkstra(&wikigraph).get_path(startNode, endNode);
+
+    std::cout << "DFS path length: ";
+    std::cout << dfs_path.size() << std::endl;
+
+    for (string name : dijkstra_path) {
+      std::cout << node_map[name].getText() << std::endl;
+    }
 
 
     // Create the window
@@ -162,38 +164,53 @@ for (auto it = adj_map.begin(); it != adj_map.end(); ++it) {
           render_texture.draw(node.second);
         }
 
-        //find neighbors of node of interest
-        vector<TextCircle* > parentNodeNeighbors = node_map["Wikispecies"].getNeighbors();
 
         //create line that will be used to highlight path from parent to each child node
         sf::VertexArray path = sf::VertexArray(sf::LineStrip, 2);
-        path[0].position = node_map["Wikispecies"].getPosition();
-        path[0].color = sf::Color::Magenta;
-        //iterate through each neighbor and update it & draw updated node to canvas
-        for (auto &node : parentNodeNeighbors) {
-          elapsed_time += delta_time;
-          if (elapsed_time > draw_delay) {
-            node->algoUpdate();
-            path[1].position = node->getPosition();
-            path[1].color = sf::Color::Magenta;
-            render_texture.draw(path);
-            render_texture.draw(*node);
-            render_texture.display();
-            sf::Sprite sprite(render_texture.getTexture());
-            window.draw(sprite);
-            window.display();
-            elapsed_time = sf::Time::Zero;
-          }
+
+
+        for (unsigned i = 0; i < dijkstra_path.size() - 1; i++) {
+          path[0].position = node_map[dijkstra_path[i]].getPosition();
+          path[0].color = sf::Color::Magenta;
+          node_map[dijkstra_path[i]].algoUpdate();
+          path[1].position = node_map[dijkstra_path[i + 1]].getPosition();
+          path[1].color = sf::Color::Magenta;
+          node_map[dijkstra_path[i+1]].algoUpdate();
+          render_texture.draw(path);
+          render_texture.draw(node_map[dijkstra_path[i]]);
         }
 
-      /**
-        // Display the window
-        render_texture.display();
+        node_map[dijkstra_path.front()].setColor(sf::Color::Green);
+        render_texture.draw(node_map[dijkstra_path.front()]);
 
+        node_map[dijkstra_path.back()].algoUpdate();
+        node_map[dijkstra_path.back()].setColor(sf::Color::Red);
+        render_texture.draw(node_map[dijkstra_path.back()]);
+
+        render_texture.display();
         sf::Sprite sprite(render_texture.getTexture());
         window.draw(sprite);
         window.display();
-        */
+
+        /**
+        for (unsigned i = 0; i < dfs_path.size() - 1; i++) {
+          path[0].position = node_map[dfs_path[i]].getPosition();
+          path[0].color = sf::Color::Magenta;
+          node_map[dfs_path[i]].algoUpdate();
+          path[1].position = node_map[dfs_path[i + 1]].getPosition();
+          path[1].color = sf::Color::Magenta;
+          node_map[dfs_path[i+1]].algoUpdate();
+
+          render_texture.draw(path);
+          render_texture.draw(node_map[dfs_path[i]]);
+          render_texture.display();
+          sf::Sprite sprite(render_texture.getTexture());
+          window.draw(sprite);
+          window.display();
+          elapsed_time = sf::Time::Zero;
+        }*/
+      
+
     }
 
     return 0;

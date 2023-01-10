@@ -1,7 +1,7 @@
 #include <limits>
 #include <iostream>
 
-#include "../include/dijkstra.h"
+#include "./include/dijkstra.h"
 
 using namespace Parsing;
 
